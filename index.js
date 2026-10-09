@@ -13,24 +13,18 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://book-verse.vercel.app",
-];
+  "https://book-verse-frontend-gamma.vercel.app",
+  process.env.FRONTEND_URL, // custom domain baad me yahan se add ho jayega
+].filter(Boolean);
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests without origin
-      // (Postman, server-to-server, etc.)
-      if (!origin) {
+      if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
       console.log("⚠️ CORS blocked:", origin);
-      return callback(new Error("Not allowed by CORS"));
+      return callback(null, false); // Error mat throw karo
     },
     credentials: true,
   })
